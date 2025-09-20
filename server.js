@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
 // ✅ Replace with your actual Gemini API key
-const GEMINI_API_KEY = AIzaSyDQ2IH9dC9pWMChEywoDTEnzL5XuzED94E;
+const GEMINI_API_KEY = "Enter your api key";
 
 app.post('/ask', async (req, res) => {
   const question = req.body.question;
@@ -38,4 +38,5 @@ app.post('/ask', async (req, res) => {
 app.listen(port, () => {
   console.log(`Gemini server running at http://localhost:${port}`);
 });
+
 
