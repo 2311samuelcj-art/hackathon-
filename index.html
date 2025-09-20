@@ -1,57 +1,561 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doubt Solver</title>
-  <style>
-    body {
-      font-family: open sans, sans-serif;
-      background: #35689c;
-      padding: 40px;
-      text-align: center;
-    }
-    h1 {
-      color: #8310ff57;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px;
-      width: 300px;
-    }
-    #answer {
-      margin-top: 40px;
-      padding: 20px;
-      background: #887d7d;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(147, 198, 29, 0.1);
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quiz Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f3f4f6;
+            --gray: #9ca3af;
+            --success: #059669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--darker), #000);
+            color: var(--light);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(17, 24, 39, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            background: var(--primary);
+            padding: 10px;
+            border-radius: 50%;
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(31, 41, 55, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        textarea::placeholder {
+            color: var(--gray);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 1.5rem 0;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gray);
+        }
+
+        select, input {
+            padding: 14px;
+            border-radius: 10px;
+            background: rgba(31, 41, 55, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        button {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .action-center {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        #results {
+            display: none;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question {
+            background: rgba(31, 41, 55, 0.6);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .question-number {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .difficulty {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .easy {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+        }
+
+        .medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .hard {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .answer-area {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .secondary-btn {
+            background: rgba(31, 41, 55, 0.8);
+            color: var(--light);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(55, 65, 81, 0.8);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Ask Your Doubt</h1>
-  <input type="text" id="question" placeholder="Type your question here..." />
-  <br />
-  <button onclick="askDoubt()">Submit</button>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> AI Quiz Generator</h1>
+            <p>Transform your study materials into interactive quizzes with artificial intelligence</p>
+        </header>
 
-  <div id="answer"></div>
+        <main>
+            <div class="card">
+                <h2><i class="fas fa-pencil-alt"></i> Your Notes</h2>
+                <textarea id="notes" placeholder="Paste your study notes, textbook content, or any learning material here..."></textarea>
+                
+                <div class="options">
+                    <div class="option-group">
+                        <label for="difficulty"><i class="fas fa-chart-line"></i> Difficulty Level</label>
+                        <select id="difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="questionCount"><i class="fas fa-question-circle"></i> Number of Questions</label>
+                        <input type="number" id="questionCount" min="1" max="20" value="5">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="questionType"><i class="fas fa-tasks"></i> Question Type</label>
+                        <select id="questionType">
+                            <option value="mixed" selected>Mixed</option>
+                            <option value="multiple">Multiple Choice</option>
+                            <option value="open">Open Ended</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-center">
+                    <button onclick="generateQuiz()" id="generateBtn">
+                        <i class="fas fa-bolt"></i> Generate Quiz
+                    </button>
+                </div>
+            </div>
+            
+            <div class="loader" id="loader">
+                <div class="loader-spinner"></div>
+                <p>Generating your quiz questions...</p>
+            </div>
 
-  <script>
-    async function askDoubt() {
-      const question = document.getElementById('question').value;
-      const response = await fetch('/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question })
-      });
-      const data = await response.json();
-      document.getElementById('answer').innerText = data.answer;
-    }
-  </script>
+            <div class="card" id="results">
+                <div class="quiz-header">
+                    <h2><i class="fas fa-tasks"></i> Generated Quiz</h2>
+                    <div id="quizStats">5 questions</div>
+                </div>
+                
+                <div id="questionsContainer">
+                    <!-- Questions will be inserted here -->
+                </div>
+                
+                <div class="actions">
+                    <button class="secondary-btn" onclick="resetQuiz()">
+                        <i class="fas fa-redo"></i> Start Over
+                    </button>
+                    <button onclick="submitQuiz()">
+                        <i class="fas fa-check-circle"></i> Submit Answers
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 AI Quiz Generator | Hackathon Project | Powered by AI</p>
+        </footer>
+    </div>
+
+    <script>
+        function generateQuiz() {
+            const notes = document.getElementById("notes").value.trim();
+            const difficulty = document.getElementById("difficulty").value;
+            const questionCount = parseInt(document.getElementById("questionCount").value);
+            const questionType = document.getElementById("questionType").value;
+            const resultsDiv = document.getElementById("results");
+            const loader = document.getElementById("loader");
+            const generateBtn = document.getElementById("generateBtn");
+
+            if (!notes) {
+                alert("Please paste some notes first.");
+                return;
+            }
+
+            // Show loading animation
+            loader.style.display = "block";
+            generateBtn.disabled = true;
+            
+            // Simulate AI processing time
+            setTimeout(() => {
+                let questions = [];
+                let questionTemplates = [];
+                
+                // Define question templates based on difficulty
+                if (difficulty === "easy") {
+                    questionTemplates = [
+                        "What is the main idea of the text?",
+                        "According to the notes, what is '{keyword}'?",
+                        "When did {event} occur?",
+                        "Who is {person} according to the text?",
+                        "Where does {process} take place?",
+                        "What is the definition of {term}?",
+                        "List one important fact about {topic}.",
+                        "What is the primary purpose of {concept}?",
+                        "Which of these is mentioned in the text?",
+                        "True or False: {statement}."
+                    ];
+                } else if (difficulty === "medium") {
+                    questionTemplates = [
+                        "Explain how {process} works according to the text.",
+                        "What are the differences between {conceptA} and {conceptB}?",
+                        "What might be the implications of {idea}?",
+                        "How does {concept} relate to {otherConcept}?",
+                        "What are the key characteristics of {topic}?",
+                        "What evidence supports {claim} in the text?",
+                        "What are the steps involved in {process}?",
+                        "What problems does {solution} address?",
+                        "Compare and contrast {conceptA} with {conceptB}.",
+                        "What would happen if {scenario} occurred?"
+                    ];
+                } else if (difficulty === "hard") {
+                    questionTemplates = [
+                        "Analyze the implications of {concept} in a real-world context.",
+                        "How would you evaluate the effectiveness of {solution}?",
+                        "What alternative explanations might exist for {phenomenon}?",
+                        "How does {theory} challenge conventional understanding of {topic}?",
+                        "What are the potential ethical concerns regarding {technology}?",
+                        "Design an experiment to test {hypothesis}.",
+                        "How would you solve {problem} using principles from the text?",
+                        "What are the limitations of {theory}?",
+                        "How might {concept} evolve in the future?",
+                        "Critique the argument that {claim}."
+                    ];
+                }
+                
+                // Extract keywords from notes for question generation
+                const keywords = extractKeywords(notes);
+                
+                // Generate questions based on count
+                for (let i = 0; i < questionCount; i++) {
+                    const randomTemplate = questionTemplates[Math.floor(Math.random() * questionTemplates.length)];
+                    const filledTemplate = fillTemplate(randomTemplate, keywords, notes);
+                    
+                    questions.push({
+                        text: filledTemplate,
+                        number: i + 1,
+                        difficulty: difficulty
+                    });
+                }
+                
+                // Display questions
+                displayQuestions(questions, difficulty);
+                
+                // Update quiz stats
+                document.getElementById("quizStats").textContent = ${questionCount} ${difficulty} questions;
+                
+                // Hide loader and show results
+                loader.style.display = "none";
+                resultsDiv.style.display = "block";
+                generateBtn.disabled = false;
+                
+                // Scroll to results
+                resultsDiv.scrollIntoView({ behavior: "smooth" });
+            }, 1500); // Simulate processing time
+        }
+        
+        function extractKeywords(text) {
+            // Simple keyword extraction - in a real app, this would use NLP
+            const words = text.split(/\s+/);
+            const importantWords = words.filter(word => 
+                word.length > 5 && 
+                !["the", "and", "is", "of", "in", "to", "a", "that", "for"].includes(word.toLowerCase())
+            );
+            
+            // Return unique words
+            return [...new Set(importantWords)].slice(0, 10);
+        }
+        
+        function fillTemplate(template, keywords, notes) {
+            // Replace placeholders with actual content
+            let result = template;
+            
+            if (template.includes("{keyword}") && keywords.length > 0) {
+                const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];
+                result = result.replace("{keyword}", randomKeyword);
+            }
+            
+            if (template.includes("{term}") && keywords.length > 0) {
+                const randomTerm = keywords[Math.floor(Math.random() * keywords.length)];
+                result = result.replace("{term}", randomTerm);
+            }
+            
+            // For other placeholders, we'd use more advanced logic in a real app
+            return result;
+        }
+        
+        function displayQuestions(questions, difficulty) {
+            const container = document.getElementById("questionsContainer");
+            container.innerHTML = "";
+            
+            questions.forEach(q => {
+                const questionEl = document.createElement("div");
+                questionEl.className = "question";
+                
+                questionEl.innerHTML = `
+                    <div class="question-header">
+                        <span class="question-number">Question ${q.number}</span>
+                        <span class="difficulty ${q.difficulty}">${q.difficulty}</span>
+                    </div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="answer-area">
+                        <textarea class="answer-input" placeholder="Type your answer here..."></textarea>
+                    </div>
+                `;
+                
+                container.appendChild(questionEl);
+            });
+        }
+        
+        function submitQuiz() {
+            alert("Quiz submitted! In a real application, your answers would be evaluated here.");
+        }
+        
+        function resetQuiz() {
+            document.getElementById("notes").value = "";
+            document.getElementById("results").style.display = "none";
+            document.getElementById("questionsContainer").innerHTML = "";
+        }
+    </script>
 </body>
-</html>
 
+</html>
